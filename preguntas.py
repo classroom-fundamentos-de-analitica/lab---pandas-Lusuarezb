@@ -209,7 +209,7 @@ def pregunta_10():
         for row in df_aux:
             array_aux.append(str(row))
         c1.append(":".join(sorted(array_aux)))
-    diccionario = {"_c1": aux, "_c2":c1}
+    diccionario = {"_c1": aux, "_c0":c1}
     table = pd.DataFrame(diccionario)
     return table
 
