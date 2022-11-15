@@ -210,9 +210,9 @@ def pregunta_10():
             array_aux.append(str(row))
         c1.append(":".join(sorted(array_aux)))
     diccionario = {"_c1": aux, "_c2":c1}
-    table = pd.DataFrame(diccionario)
+    #table = pd.DataFrame(diccionario)
+    table = pd.DataFrame({"_c2":c1}, index=pd.Series(aux))
     return table
-
 
 def pregunta_11():
     """
