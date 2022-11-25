@@ -22,7 +22,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return tbl0.shape[0]
 
 
 def pregunta_02():
@@ -33,7 +33,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return tbl0.shape[1]
 
 
 def pregunta_03():
@@ -50,7 +50,14 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    aux = sorted(tbl0._c1.unique())
+    conteo = []
+    for value in aux:
+        conteo.append(tbl0[tbl0._c1 == value].shape[0])
+
+    serie = pd.Series(conteo, aux)
+    serie.name = "_c1"
+    return serie
 
 
 def pregunta_04():
@@ -65,7 +72,17 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    aux = sorted(tbl0._c1.unique())
+    proms = []
+    for value in aux:
+        df_aux = tbl0[tbl0._c1 == value]._c2
+        suma = df_aux.sum()
+        cant = len(df_aux)
+        proms.append(suma/cant)
+
+    serie = pd.Series(proms, aux)
+    serie.name = "_c2"
+    return serie
 
 
 def pregunta_05():
@@ -82,7 +99,15 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    aux = sorted(tbl0._c1.unique())
+    maxs = []
+    for value in aux:
+        df_aux = tbl0[tbl0._c1 == value]._c2
+        maxs.append(df_aux.max())
+    serie = pd.Series(maxs, aux)
+    serie.name = "_c2"
+
+    return serie
 
 
 def pregunta_06():
@@ -94,8 +119,8 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
-
+    aux = sorted(tbl1._c4.str.upper().unique())
+    return aux
 
 def pregunta_07():
     """
@@ -110,7 +135,14 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    aux = sorted(tbl0._c1.unique())
+    sums = []
+    for value in aux:
+        df_aux = tbl0[tbl0._c1 == value]._c2
+        sums.append(df_aux.sum())
+    serie = pd.Series(sums, aux)
+    serie.name = "_c2"
+    return serie
 
 
 def pregunta_08():
@@ -128,7 +160,10 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    df_aux = tbl0
+    suma = tbl0._c0 + tbl0._c2
+    df_aux["suma"] = suma
+    return df_aux
 
 
 def pregunta_09():
@@ -146,7 +181,10 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    df_aux = tbl0
+    fecha = df_aux._c3.str.slice(stop=4)
+    df_aux["year"] = fecha
+    return df_aux
 
 
 def pregunta_10():
@@ -163,8 +201,18 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
-
+    aux = sorted(tbl0._c1.unique())
+    c1 = []
+    for value in aux:
+        array_aux = []
+        df_aux = tbl0[tbl0._c1 == value]._c2
+        for row in df_aux:
+            array_aux.append(str(row))
+        c1.append(":".join(sorted(array_aux)))
+    diccionario = {"_c1": aux, "_c2":c1}
+    #table = pd.DataFrame(diccionario)
+    table = pd.DataFrame({"_c2":c1}, index=pd.Series(aux))
+    return table
 
 def pregunta_11():
     """
@@ -182,8 +230,17 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
-
+    aux = sorted(tbl1._c0.unique())
+    c4 = []
+    for value in aux:
+        array_aux = []
+        df_aux = tbl1[tbl1._c0 == value]._c4
+        for row in df_aux:
+            array_aux.append(str(row))
+        c4.append(",".join(sorted(array_aux)))
+    diccionario = {"_c0": aux, "_c4":c4}
+    table = pd.DataFrame(diccionario)
+    return table
 
 def pregunta_12():
     """
@@ -200,7 +257,19 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    aux = sorted(tbl2._c0.unique())
+    c5 = []
+    for value in aux:
+        array_aux = []
+        df_aux = tbl2[tbl2._c0 == value][["_c5a", "_c5b"]]
+        for i in range(len(df_aux)):
+            str_aux = str(df_aux.iloc[i][0]) + ":" + str(df_aux.iloc[i][1])
+            array_aux.append(str_aux)
+
+        c5.append(",".join(sorted(array_aux)))
+    diccionario = {"_c0": aux, "_c5":c5}
+    table = pd.DataFrame(diccionario)
+    return table
 
 
 def pregunta_13():
@@ -217,4 +286,17 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    diccionario = {}
+    datos = tbl2[["_c0","_c5b"]]
+    datos_aux = tbl0[["_c0", "_c1"]]
+    
+    for i in range(len(datos)):
+        subclave = datos.iloc[i][0]
+        valor = datos.iloc[i][1]
+        clave = datos_aux.iloc[subclave][1]
+        diccionario[clave] = diccionario.get(clave, 0) + valor
+    series = pd.Series(diccionario)
+    series.sort_index(ascending=True, inplace=True)
+    series.index.name = "_c1"
+    series.name = "_c5b"
+    return series
